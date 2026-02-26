@@ -29,4 +29,18 @@ program
     .addCommand(createPluginCommand())
     .addCommand(createConfigCommand());
 
-program.parse(process.argv);
+/**
+ * Exit Codes:
+ *   0 — Scan completed, no critical/high findings
+ *   1 — Scan completed, critical or high findings detected
+ *   2 — Runtime error (bad config, network failure, etc.)
+ */
+(async () => {
+    try {
+        await program.parseAsync(process.argv);
+    } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error(`\n  ✗ Fatal: ${msg}`);
+        process.exit(2);
+    }
+})();

@@ -1,0 +1,44 @@
+# Dependencies (rebuilt in container)
+node_modules/
+
+# Build output (rebuilt in container)
+dist/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / Coverage
+coverage/
+*.test.ts
+
+# Documentation (not needed in image)
+docs/
+*.md
+!README.md
+
+# CI / Config files not needed at runtime
+.github/
+.editorconfig
+.eslintrc*
+.prettierrc*
+
+# Scan outputs
+mantis-output/
+*.sarif
+*.log
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
