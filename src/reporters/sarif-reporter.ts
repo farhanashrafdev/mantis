@@ -11,7 +11,7 @@
  * Spec: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
  */
 
-import type {
+import {
     ScanReport,
     Finding,
     Reporter,
@@ -24,14 +24,16 @@ type SarifLevel = 'error' | 'warning' | 'note' | 'none';
 
 function toSarifLevel(severity: SeverityLevel): SarifLevel {
     switch (severity) {
-        case 'critical':
-        case 'high':
+        case SeverityLevel.Critical:
+        case SeverityLevel.High:
             return 'error';
-        case 'medium':
+        case SeverityLevel.Medium:
             return 'warning';
-        case 'low':
+        case SeverityLevel.Low:
             return 'note';
-        case 'info':
+        case SeverityLevel.Info:
+            return 'none';
+        default:
             return 'none';
     }
 }
@@ -39,11 +41,12 @@ function toSarifLevel(severity: SeverityLevel): SarifLevel {
 /** SARIF security severity mapping (for GitHub) */
 function toSecuritySeverity(severity: SeverityLevel): string {
     switch (severity) {
-        case 'critical': return 'critical';
-        case 'high': return 'high';
-        case 'medium': return 'medium';
-        case 'low': return 'low';
-        case 'info': return 'low';
+        case SeverityLevel.Critical: return 'critical';
+        case SeverityLevel.High: return 'high';
+        case SeverityLevel.Medium: return 'medium';
+        case SeverityLevel.Low: return 'low';
+        case SeverityLevel.Info: return 'low';
+        default: return 'low';
     }
 }
 
@@ -76,16 +79,16 @@ interface SarifRule {
  */
 export class SARIFReporter implements Reporter {
     name = 'sarif';
-    format: OutputFormat = 'sarif';
+    format: OutputFormat = OutputFormat.SARIF;
 
-    async render(report: ScanReport): Promise<string> {
+    generate(report: ScanReport): string {
         const sarif = this.buildSarif(report);
         return JSON.stringify(sarif, null, 2);
     }
 
-    async write(report: ScanReport, outputPath: string): Promise<void> {
+    async writeToFile(report: ScanReport, outputPath: string): Promise<void> {
         const { writeFile } = await import('node:fs/promises');
-        const content = await this.render(report);
+        const content = await this.generate(report);
         await writeFile(outputPath, content, 'utf-8');
     }
 
@@ -179,9 +182,9 @@ export class SARIFReporter implements Reporter {
                     invocations: [
                         {
                             executionSuccessful: true,
-                            startTimeUtc: report.meta.timestamp,
+                            startTimeUtc: report.meta.startedAt,
                             endTimeUtc: new Date(
-                                new Date(report.meta.timestamp).getTime() +
+                                new Date(report.meta.startedAt).getTime() +
                                 report.meta.durationMs,
                             ).toISOString(),
                             properties: {

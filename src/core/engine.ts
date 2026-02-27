@@ -23,9 +23,11 @@ import type {
     ScanReport,
     PluginExecutionResult,
     Logger,
+    PluginStatus,
+} from '../types/types.js';
+import {
     AttackCategory,
     SeverityLevel,
-    PluginStatus,
 } from '../types/types.js';
 
 /** Default logger implementation */
@@ -48,11 +50,11 @@ function createDefaultLogger(verbose: boolean): Logger {
 
 /** Severity level to numeric priority for filtering */
 const SEVERITY_PRIORITY: Record<SeverityLevel, number> = {
-    critical: 5,
-    high: 4,
-    medium: 3,
-    low: 2,
-    info: 1,
+    [SeverityLevel.Critical]: 5,
+    [SeverityLevel.High]: 4,
+    [SeverityLevel.Medium]: 3,
+    [SeverityLevel.Low]: 2,
+    [SeverityLevel.Info]: 1,
 };
 
 /** Engine events for lifecycle hooks */
@@ -257,11 +259,11 @@ export class CoreEngine {
             new Date(completedAt).getTime() - new Date(startedAt).getTime();
 
         // Count by severity
-        const criticalCount = findings.filter((f) => f.severity === 'critical').length;
-        const highCount = findings.filter((f) => f.severity === 'high').length;
-        const mediumCount = findings.filter((f) => f.severity === 'medium').length;
-        const lowCount = findings.filter((f) => f.severity === 'low').length;
-        const infoCount = findings.filter((f) => f.severity === 'info').length;
+        const criticalCount = findings.filter((f) => f.severity === SeverityLevel.Critical).length;
+        const highCount = findings.filter((f) => f.severity === SeverityLevel.High).length;
+        const mediumCount = findings.filter((f) => f.severity === SeverityLevel.Medium).length;
+        const lowCount = findings.filter((f) => f.severity === SeverityLevel.Low).length;
+        const infoCount = findings.filter((f) => f.severity === SeverityLevel.Info).length;
 
         // Overall risk score (average of all finding scores, or 0 if none)
         const overallRiskScore =
@@ -272,10 +274,10 @@ export class CoreEngine {
         // Category scores
         const categoryScores = {} as Record<AttackCategory, number>;
         for (const category of Object.values({
-            pi: 'prompt-injection' as AttackCategory,
-            dl: 'data-leakage' as AttackCategory,
-            hal: 'hallucination' as AttackCategory,
-            te: 'tool-exploit' as AttackCategory,
+            pi: AttackCategory.PromptInjection,
+            dl: AttackCategory.DataLeakage,
+            hal: AttackCategory.Hallucination,
+            te: AttackCategory.ToolExploit,
         })) {
             const catFindings = findings.filter((f) => f.category === category);
             categoryScores[category] =
@@ -287,12 +289,12 @@ export class CoreEngine {
         // Overall severity
         const overallSeverity: SeverityLevel =
             overallRiskScore >= 9
-                ? 'critical'
+                ? SeverityLevel.Critical
                 : overallRiskScore >= 7
-                    ? 'high'
+                    ? SeverityLevel.High
                     : overallRiskScore >= 4
-                        ? 'medium'
-                        : 'low';
+                        ? SeverityLevel.Medium
+                        : SeverityLevel.Low;
 
         return {
             meta: {

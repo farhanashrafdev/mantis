@@ -16,7 +16,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import type {
+import {
     Plugin,
     PluginMeta,
     AttackPrompt,
@@ -118,7 +118,7 @@ export abstract class BasePlugin implements Plugin {
      * Override this in subclasses for custom analysis logic.
      */
     analyze(prompt: AttackPrompt, response: LLMResponse): FindingResult {
-        const responseText = response.text.toLowerCase();
+        // const responseText = response.text.toLowerCase();
         const matchedVulnerable: string[] = [];
         const matchedSecure: string[] = [];
 
@@ -181,11 +181,11 @@ export abstract class BasePlugin implements Plugin {
 
         // Re-map severity based on actual risk score
         const adjustedSeverity: SeverityLevel =
-            riskScore >= 9 ? 'critical'
-                : riskScore >= 7 ? 'high'
-                    : riskScore >= 4 ? 'medium'
-                        : riskScore >= 1 ? 'low'
-                            : 'info';
+            riskScore >= 9 ? SeverityLevel.Critical
+                : riskScore >= 7 ? SeverityLevel.High
+                    : riskScore >= 4 ? SeverityLevel.Medium
+                        : riskScore >= 1 ? SeverityLevel.Low
+                            : SeverityLevel.Info;
 
         return {
             id: randomUUID(),

@@ -14,7 +14,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { CoreEngine } from '../../core/engine.js';
 import { printBanner, printLegalWarning } from '../banner.js';
-import type {
+import {
     ScanConfig,
     SeverityLevel,
     OutputFormat,
@@ -32,8 +32,8 @@ function buildScanConfig(options: Record<string, unknown>): ScanConfig {
     const severity = (options['severityThreshold'] as SeverityLevel) ?? CONFIG_DEFAULTS.scan.severityThreshold;
     const output = options['output'] as string | undefined;
     const verbose = (options['verbose'] as boolean) ?? CONFIG_DEFAULTS.output.verbose;
-    const rateLimit = (options['rateLimit'] as number) ?? CONFIG_DEFAULTS.scan.rateLimit;
-    const timeout = (options['timeout'] as number) ?? CONFIG_DEFAULTS.scan.timeoutMs;
+    const rateLimit = options['rateLimit'] === undefined ? (CONFIG_DEFAULTS.scan.rateLimit || 10) : Number(options['rateLimit']);
+    const timeout = options['timeout'] === undefined ? (CONFIG_DEFAULTS.scan.timeoutMs || 30000) : Number(options['timeout']);
 
     const includeModules = modules ? modules.split(',').map((m) => m.trim()) : [];
 
@@ -52,30 +52,39 @@ function buildScanConfig(options: Record<string, unknown>): ScanConfig {
         },
         scan: {
             timeoutMs: timeout,
-            maxRetries: CONFIG_DEFAULTS.scan.maxRetries,
-            retryDelayMs: CONFIG_DEFAULTS.scan.retryDelayMs,
+            maxRetries: CONFIG_DEFAULTS.scan.maxRetries ?? 3,
+            retryDelayMs: CONFIG_DEFAULTS.scan.retryDelayMs ?? 1000,
             rateLimit,
             severityThreshold: severity,
-            reproducibilityAttempts: CONFIG_DEFAULTS.scan.reproducibilityAttempts,
+            reproducibilityAttempts: CONFIG_DEFAULTS.scan.reproducibilityAttempts ?? 1,
         },
         output: {
             format,
             file: output,
             verbose,
-            redactResponses: CONFIG_DEFAULTS.output.redactResponses,
+            redactResponses: CONFIG_DEFAULTS.output.redactResponses ?? true,
         },
-        scoring: CONFIG_DEFAULTS.scoring,
+        scoring: {
+            weights: {
+                exploitability: CONFIG_DEFAULTS.scoring.weights?.exploitability ?? 0.3,
+                impact: CONFIG_DEFAULTS.scoring.weights?.impact ?? 0.3,
+                dataSensitivity: CONFIG_DEFAULTS.scoring.weights?.dataSensitivity ?? 0.2,
+                reproducibility: CONFIG_DEFAULTS.scoring.weights?.reproducibility ?? 0.1,
+                modelCompliance: CONFIG_DEFAULTS.scoring.weights?.modelCompliance ?? 0.1
+            }
+        },
     };
 }
 
 /** Severity to colored string */
 function colorSeverity(severity: SeverityLevel): string {
     switch (severity) {
-        case 'critical': return chalk.bgRed.white.bold(` CRITICAL `);
-        case 'high': return chalk.red.bold('HIGH');
-        case 'medium': return chalk.yellow.bold('MEDIUM');
-        case 'low': return chalk.blue('LOW');
-        case 'info': return chalk.gray('INFO');
+        case SeverityLevel.Critical: return chalk.bgRed.white.bold(` CRITICAL `);
+        case SeverityLevel.High: return chalk.red.bold('HIGH');
+        case SeverityLevel.Medium: return chalk.yellow.bold('MEDIUM');
+        case SeverityLevel.Low: return chalk.blue('LOW');
+        case SeverityLevel.Info: return chalk.gray('INFO');
+        default: return chalk.gray('INFO');
     }
 }
 
@@ -180,8 +189,8 @@ export function createScanCommand(): Command {
         .option('--prompt-field <path>', 'JSON path for prompt in request body', 'prompt')
         .option('--response-field <path>', 'JSON path for response in response body', 'response')
         .option('--auth-token <token>', 'Bearer token for authentication (prefer MANTIS_AUTH_TOKEN env var)')
-        .option('--rate-limit <rps>', 'Max requests per second', '10')
-        .option('--timeout <ms>', 'Request timeout in milliseconds', '30000')
+        .option('--rate-limit <rps>', 'Max requests per second', String(CONFIG_DEFAULTS.scan.rateLimit || 10))
+        .option('--timeout <ms>', 'Request timeout in milliseconds', String(CONFIG_DEFAULTS.scan.timeoutMs || 30000))
         .option('-v, --verbose', 'Enable verbose output', false)
         .action(async (options) => {
             printBanner();
@@ -206,13 +215,13 @@ export function createScanCommand(): Command {
                     onPluginStart: (plugin) => {
                         spinner.text = `Testing: ${plugin.meta.name}...`;
                     },
-                    onPluginComplete: (result) => {
+                    onPluginComplete: (result: PluginExecutionResult) => {
                         const icon = result.findings.length > 0 ? chalk.red('✗') : chalk.green('✓');
                         spinner.stop();
                         console.log(`  ${icon} ${result.pluginName} — ${result.findings.length} findings (${result.durationMs}ms)`);
                         spinner.start();
                     },
-                    onFinding: (_finding) => {
+                    onFinding: (_finding: Finding) => {
                         // Finding tracking handled in summary
                     },
                 });
@@ -226,7 +235,7 @@ export function createScanCommand(): Command {
                 spinner.stop();
 
                 // Output based on format
-                if (config.output.format === 'json') {
+                if (config.output.format === OutputFormat.JSON) {
                     const jsonOutput = JSON.stringify(report, null, 2);
                     if (config.output.file) {
                         const { writeFile } = await import('node:fs/promises');

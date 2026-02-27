@@ -8,7 +8,7 @@
  *   - API responses
  */
 
-import type {
+import {
     ScanReport,
     Reporter,
     OutputFormat,
@@ -19,21 +19,21 @@ import type {
  */
 export class JSONReporter implements Reporter {
     name = 'json';
-    format: OutputFormat = 'json';
+    format: OutputFormat = OutputFormat.JSON;
 
     /** Pretty-print the scan report as JSON */
-    async render(report: ScanReport): Promise<string> {
+    generate(report: ScanReport): string {
         return JSON.stringify(this.normalizeReport(report), null, 2);
     }
 
     /** Compact JSON (for API responses) */
-    async renderCompact(report: ScanReport): Promise<string> {
+    generateCompact(report: ScanReport): string {
         return JSON.stringify(this.normalizeReport(report));
     }
 
-    async write(report: ScanReport, outputPath: string): Promise<void> {
+    async writeToFile(report: ScanReport, outputPath: string): Promise<void> {
         const { writeFile } = await import('node:fs/promises');
-        const content = await this.render(report);
+        const content = this.generate(report);
         await writeFile(outputPath, content, 'utf-8');
     }
 
@@ -48,7 +48,8 @@ export class JSONReporter implements Reporter {
             meta: {
                 scanId: report.meta.scanId,
                 targetUrl: report.meta.targetUrl,
-                timestamp: report.meta.timestamp,
+                startedAt: report.meta.startedAt,
+                completedAt: report.meta.completedAt,
                 durationMs: report.meta.durationMs,
                 pluginsExecuted: report.meta.pluginsExecuted,
                 totalPromptsSent: report.meta.totalPromptsSent,

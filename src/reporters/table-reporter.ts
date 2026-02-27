@@ -9,9 +9,8 @@
 
 import Table from 'cli-table3';
 import chalk from 'chalk';
-import type {
+import {
     ScanReport,
-    Finding,
     Reporter,
     SeverityLevel,
     OutputFormat,
@@ -20,11 +19,12 @@ import type {
 /** Severity to display string with color */
 function severityDisplay(severity: SeverityLevel): string {
     switch (severity) {
-        case 'critical': return chalk.bgRed.white.bold(' CRIT ');
-        case 'high': return chalk.red.bold('HIGH');
-        case 'medium': return chalk.yellow.bold('MED ');
-        case 'low': return chalk.blue('LOW ');
-        case 'info': return chalk.gray('INFO');
+        case SeverityLevel.Critical: return chalk.bgRed.white.bold(' CRIT ');
+        case SeverityLevel.High: return chalk.red.bold('HIGH');
+        case SeverityLevel.Medium: return chalk.yellow.bold('MED ');
+        case SeverityLevel.Low: return chalk.blue('LOW ');
+        case SeverityLevel.Info: return chalk.gray('INFO');
+        default: return chalk.gray('INFO');
     }
 }
 
@@ -42,9 +42,9 @@ function scoreDisplay(score: number): string {
  */
 export class TableReporter implements Reporter {
     name = 'table';
-    format: OutputFormat = 'table';
+    format: OutputFormat = OutputFormat.Table;
 
-    async render(report: ScanReport): Promise<string> {
+    generate(report: ScanReport): string {
         const lines: string[] = [];
 
         // Header
@@ -66,7 +66,8 @@ export class TableReporter implements Reporter {
             [chalk.gray('Duration'), chalk.white(`${report.meta.durationMs}ms`)],
             [chalk.gray('Plugins Run'), chalk.white(report.meta.pluginsExecuted.toString())],
             [chalk.gray('Prompts Sent'), chalk.white(report.meta.totalPromptsSent.toString())],
-            [chalk.gray('Timestamp'), chalk.white(report.meta.timestamp)],
+            [chalk.gray('Started At'), chalk.white(report.meta.startedAt)],
+            [chalk.gray('Completed At'), chalk.white(report.meta.completedAt)],
         );
         lines.push(metaTable.toString());
         lines.push('');
@@ -111,14 +112,14 @@ export class TableReporter implements Reporter {
 
         type SeverityKey = 'criticalCount' | 'highCount' | 'mediumCount' | 'lowCount' | 'infoCount';
         const severityData: { label: string; key: SeverityKey; sev: SeverityLevel }[] = [
-            { label: 'Critical', key: 'criticalCount', sev: 'critical' },
-            { label: 'High', key: 'highCount', sev: 'high' },
-            { label: 'Medium', key: 'mediumCount', sev: 'medium' },
-            { label: 'Low', key: 'lowCount', sev: 'low' },
-            { label: 'Info', key: 'infoCount', sev: 'info' },
+            { label: 'Critical', key: 'criticalCount', sev: SeverityLevel.Critical },
+            { label: 'High', key: 'highCount', sev: SeverityLevel.High },
+            { label: 'Medium', key: 'mediumCount', sev: SeverityLevel.Medium },
+            { label: 'Low', key: 'lowCount', sev: SeverityLevel.Low },
+            { label: 'Info', key: 'infoCount', sev: SeverityLevel.Info },
         ];
 
-        for (const { label, key, sev } of severityData) {
+        for (const { key, sev } of severityData) {
             const count = report.summary[key];
             if (count > 0) {
                 const bar = '█'.repeat(Math.min(count * 2, 40));
@@ -185,10 +186,10 @@ export class TableReporter implements Reporter {
         return lines.join('\n');
     }
 
-    async write(report: ScanReport, outputPath: string): Promise<void> {
+    async writeToFile(report: ScanReport, outputPath: string): Promise<void> {
         const { writeFile } = await import('node:fs/promises');
         // Strip ANSI for file output
-        const content = await this.render(report);
+        const content = this.generate(report);
         const stripped = content.replace(/\x1b\[[0-9;]*m/g, '');
         await writeFile(outputPath, stripped, 'utf-8');
     }

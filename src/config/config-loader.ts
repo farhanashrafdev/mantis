@@ -16,14 +16,18 @@ import { resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import type {
     MantisConfigFile,
-    TargetConfig,
-    ModulesConfig,
+    ModuleConfig,
     ScanBehaviorConfig,
     OutputConfig,
     ScoringConfig,
+    ProfileConfig,
 } from '../types/config.js';
 import { CONFIG_DEFAULTS } from '../types/config.js';
-import type { ScanConfig } from '../types/types.js';
+import {
+    ScanConfig,
+    SeverityLevel,
+    OutputFormat
+} from '../types/types.js';
 
 /** Possible config file names (checked in order) */
 const CONFIG_FILE_NAMES = [
@@ -78,23 +82,42 @@ export class ConfigLoader {
         profile?: string;
         cliOverrides?: Partial<ScanConfig>;
     }): Promise<ScanConfig> {
+        const CONFIG_DEFAULTS_CAST = CONFIG_DEFAULTS as Required<Omit<MantisConfigFile, 'version' | 'profiles'>>;
+
         // 1. Start with defaults
         const config: ScanConfig = {
             target: {
                 url: '',
-                method: CONFIG_DEFAULTS.target.method,
-                headers: { ...CONFIG_DEFAULTS.target.headers },
-                promptField: CONFIG_DEFAULTS.target.promptField,
-                responseField: CONFIG_DEFAULTS.target.responseField,
+                method: 'POST',
+                headers: {},
+                promptField: 'prompt',
+                responseField: 'response',
             },
             modules: {
-                include: [...CONFIG_DEFAULTS.modules.include],
-                exclude: [...CONFIG_DEFAULTS.modules.exclude],
+                include: [...(CONFIG_DEFAULTS.modules.include || [])],
+                exclude: [...(CONFIG_DEFAULTS.modules.exclude || [])],
             },
-            scan: { ...CONFIG_DEFAULTS.scan },
-            output: { ...CONFIG_DEFAULTS.output },
+            scan: {
+                timeoutMs: CONFIG_DEFAULTS_CAST.scan.timeoutMs ?? 30000,
+                maxRetries: CONFIG_DEFAULTS_CAST.scan.maxRetries ?? 2,
+                retryDelayMs: CONFIG_DEFAULTS_CAST.scan.retryDelayMs ?? 1000,
+                rateLimit: CONFIG_DEFAULTS_CAST.scan.rateLimit ?? 10,
+                severityThreshold: CONFIG_DEFAULTS_CAST.scan.severityThreshold ?? SeverityLevel.Low,
+                reproducibilityAttempts: CONFIG_DEFAULTS_CAST.scan.reproducibilityAttempts ?? 3,
+            },
+            output: {
+                format: CONFIG_DEFAULTS_CAST.output.format ?? OutputFormat.Table,
+                verbose: CONFIG_DEFAULTS_CAST.output.verbose ?? false,
+                redactResponses: CONFIG_DEFAULTS_CAST.output.redactResponses ?? true,
+            },
             scoring: {
-                weights: { ...CONFIG_DEFAULTS.scoring.weights },
+                weights: {
+                    exploitability: CONFIG_DEFAULTS_CAST.scoring.weights?.exploitability ?? 0.30,
+                    impact: CONFIG_DEFAULTS_CAST.scoring.weights?.impact ?? 0.25,
+                    dataSensitivity: CONFIG_DEFAULTS_CAST.scoring.weights?.dataSensitivity ?? 0.20,
+                    reproducibility: CONFIG_DEFAULTS_CAST.scoring.weights?.reproducibility ?? 0.15,
+                    modelCompliance: CONFIG_DEFAULTS_CAST.scoring.weights?.modelCompliance ?? 0.10,
+                },
             },
         };
 
@@ -200,9 +223,9 @@ export class ConfigLoader {
     }
 
     /** Merge a named profile into scan config */
-    private mergeProfile(config: ScanConfig, profile: Record<string, unknown>): void {
+    private mergeProfile(config: ScanConfig, profile: ProfileConfig): void {
         const p = profile as Partial<{
-            modules: Partial<ModulesConfig>;
+            modules: Partial<ModuleConfig>;
             scan: Partial<ScanBehaviorConfig>;
             output: Partial<OutputConfig>;
             scoring: Partial<ScoringConfig>;
@@ -242,11 +265,19 @@ export class ConfigLoader {
         }
 
         if (overrides.scan) {
-            Object.assign(config.scan, overrides.scan);
+            if (overrides.scan.timeoutMs !== undefined) config.scan.timeoutMs = overrides.scan.timeoutMs;
+            if (overrides.scan.maxRetries !== undefined) config.scan.maxRetries = overrides.scan.maxRetries;
+            if (overrides.scan.retryDelayMs !== undefined) config.scan.retryDelayMs = overrides.scan.retryDelayMs;
+            if (overrides.scan.rateLimit !== undefined) config.scan.rateLimit = overrides.scan.rateLimit;
+            if (overrides.scan.severityThreshold) config.scan.severityThreshold = overrides.scan.severityThreshold;
+            if (overrides.scan.reproducibilityAttempts !== undefined) config.scan.reproducibilityAttempts = overrides.scan.reproducibilityAttempts;
         }
 
         if (overrides.output) {
-            Object.assign(config.output, overrides.output);
+            if (overrides.output.format) config.output.format = overrides.output.format;
+            if (overrides.output.file) config.output.file = overrides.output.file;
+            if (overrides.output.verbose !== undefined) config.output.verbose = overrides.output.verbose;
+            if (overrides.output.redactResponses !== undefined) config.output.redactResponses = overrides.output.redactResponses;
         }
     }
 

@@ -7,7 +7,7 @@
  */
 
 import { readdir } from 'node:fs/promises';
-import { join, basename } from 'node:path';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { Plugin, AttackCategory } from '../types/types.js';
 
