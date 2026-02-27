@@ -111,6 +111,7 @@ export class PluginRegistry {
             for (const file of pluginFiles) {
                 if (!file.isFile()) continue;
                 if (!file.name.endsWith('.ts') && !file.name.endsWith('.js')) continue;
+                if (file.name.endsWith('.d.ts')) continue;
                 if (file.name.startsWith('.') || file.name.startsWith('_')) continue;
                 if (file.name.endsWith('.test.ts') || file.name.endsWith('.spec.ts')) continue;
 

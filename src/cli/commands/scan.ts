@@ -221,7 +221,7 @@ export function createScanCommand(): Command {
                         console.log(`  ${icon} ${result.pluginName} — ${result.findings.length} findings (${result.durationMs}ms)`);
                         spinner.start();
                     },
-                    onFinding: (_finding: Finding) => {
+                    onFinding: () => {
                         // Finding tracking handled in summary
                     },
                 });

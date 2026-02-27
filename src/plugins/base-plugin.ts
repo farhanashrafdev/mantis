@@ -201,7 +201,7 @@ export abstract class BasePlugin implements Plugin {
                 : response.text,
             evidence: result.evidence,
             confidence: reproducibility.confidence,
-            remediation: this.getRemediation(prompt),
+            remediation: this.getRemediation(),
             cwe: this.getCWE(),
             timestamp: new Date().toISOString(),
             reproducible: reproducibility.reproducible,
@@ -216,7 +216,7 @@ export abstract class BasePlugin implements Plugin {
     }
 
     /** Override in subclasses for category-specific remediation */
-    protected getRemediation(_prompt: AttackPrompt): string {
+    protected getRemediation(): string {
         return 'Implement input validation, output filtering, and robust system prompt isolation.';
     }
 

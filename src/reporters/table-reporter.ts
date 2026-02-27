@@ -190,6 +190,7 @@ export class TableReporter implements Reporter {
         const { writeFile } = await import('node:fs/promises');
         // Strip ANSI for file output
         const content = this.generate(report);
+        // eslint-disable-next-line no-control-regex
         const stripped = content.replace(/\x1b\[[0-9;]*m/g, '');
         await writeFile(outputPath, stripped, 'utf-8');
     }

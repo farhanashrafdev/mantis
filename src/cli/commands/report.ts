@@ -36,9 +36,21 @@ export function createReportCommand(): Command {
                 console.log(chalk.gray(`  ${report.summary.totalFindings} findings from ${report.meta.pluginsExecuted} plugins`));
                 console.log();
 
-                // Format conversion will be handled by the reporting engine (Commit 10)
-                // For now, output the JSON
-                const output = JSON.stringify(report, null, 2);
+                let output = '';
+
+                if (format === 'sarif') {
+                    const { SARIFReporter } = await import('../../reporters/sarif-reporter.js');
+                    const reporter = new SARIFReporter();
+                    output = await reporter.generate(report);
+                } else if (format === 'json') {
+                    const { JSONReporter } = await import('../../reporters/json-reporter.js');
+                    const reporter = new JSONReporter();
+                    output = await reporter.generate(report);
+                } else {
+                    const { TableReporter } = await import('../../reporters/table-reporter.js');
+                    const reporter = new TableReporter();
+                    output = await reporter.generate(report);
+                }
 
                 if (outputPath) {
                     await writeFile(outputPath, output, 'utf-8');

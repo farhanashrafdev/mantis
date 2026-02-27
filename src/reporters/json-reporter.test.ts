@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { JSONReporter } from './json-reporter.js';
-import { ScanReport, OutputFormat, SeverityLevel, AttackCategory } from '../types/types.js';
+import { ScanReport, SeverityLevel, AttackCategory } from '../types/types.js';
 
 describe('JSONReporter', () => {
     const report: ScanReport = {
@@ -10,19 +10,27 @@ describe('JSONReporter', () => {
             startedAt: new Date().toISOString(),
             completedAt: new Date().toISOString(),
             durationMs: 1500,
+            mantisVersion: '1.0.0',
+            pluginsExecuted: 1,
+            totalPromptsSent: 1,
         },
         summary: {
-            totalPlugins: 1,
             totalFindings: 1,
             criticalCount: 0,
             highCount: 1,
             mediumCount: 0,
             lowCount: 0,
             infoCount: 0,
-            categoryScores: { [AttackCategory.PromptInjection]: 8.5 },
+            categoryScores: {
+                [AttackCategory.PromptInjection]: 8.5,
+                [AttackCategory.DataLeakage]: 0,
+                [AttackCategory.Hallucination]: 0,
+                [AttackCategory.ToolExploit]: 0,
+            },
             overallRiskScore: 8.5,
             overallSeverity: SeverityLevel.High,
         },
+        pluginResults: [],
         findings: [
             {
                 id: '1',
