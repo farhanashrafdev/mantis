@@ -57,6 +57,8 @@ export interface PluginMeta {
     author: string;
     /** Tags for filtering and search */
     tags: string[];
+    /** OWASP Top 10 for LLM Applications reference (e.g., "LLM01: Prompt Injection") */
+    owaspLLM?: string;
 }
 
 /** A single attack prompt with its expected behavior definition */

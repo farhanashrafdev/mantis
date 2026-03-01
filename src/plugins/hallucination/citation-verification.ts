@@ -24,6 +24,7 @@ class CitationVerificationPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['hallucination', 'citations', 'sources', 'references', 'fabrication'],
+        owaspLLM: 'LLM09: Misinformation',
     };
 
     prompts: AttackPrompt[] = [

@@ -25,6 +25,7 @@ class NonexistentEntityPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['hallucination', 'fabrication', 'fake-entities', 'confabulation'],
+        owaspLLM: 'LLM09: Misinformation',
     };
 
     prompts: AttackPrompt[] = [

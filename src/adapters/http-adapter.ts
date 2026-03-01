@@ -96,7 +96,9 @@ export class HttpAdapter implements LLMAdapter {
 
         for (let attempt = 0; attempt <= this.config.maxRetries; attempt++) {
             if (attempt > 0) {
-                await sleep(this.config.retryDelayMs * attempt);
+                const backoff = this.config.retryDelayMs * Math.pow(2, attempt - 1);
+                const jitter = Math.random() * backoff * 0.5;
+                await sleep(backoff + jitter);
             }
 
             try {

@@ -26,6 +26,7 @@ class RoleConfusionPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['prompt-injection', 'role-confusion', 'boundaries', 'identity'],
+        owaspLLM: 'LLM01: Prompt Injection',
     };
 
     prompts: AttackPrompt[] = [

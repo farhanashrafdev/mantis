@@ -13,6 +13,7 @@
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { PluginRegistry } from './plugin-registry.js';
 import { HttpAdapter } from '../adapters/http-adapter.js';
 import type {
@@ -29,6 +30,18 @@ import {
     AttackCategory,
     SeverityLevel,
 } from '../types/types.js';
+
+/** Read version from package.json once at module load */
+const MANTIS_VERSION = (() => {
+    try {
+        const currentFile = fileURLToPath(import.meta.url);
+        const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string };
+        return pkg.version;
+    } catch {
+        return '0.0.0';
+    }
+})();
 
 /** Default logger implementation */
 function createDefaultLogger(verbose: boolean): Logger {
@@ -303,7 +316,7 @@ export class CoreEngine {
                 startedAt,
                 completedAt,
                 durationMs,
-                mantisVersion: '0.1.0',
+                mantisVersion: MANTIS_VERSION,
                 pluginsExecuted,
                 totalPromptsSent,
             },

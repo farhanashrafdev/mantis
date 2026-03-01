@@ -146,13 +146,13 @@ mantis scan --target "$AI_APP_URL" --format sarif --output results.sarif
 
 ## Attack Modules
 
-| Module | Plugins | Attacks | Status |
-|--------|---------|---------|--------|
-| Prompt Injection | 4 | 20 | ✅ |
-| Data Leakage | 4 | 16 | ✅ |
-| Hallucination | 4 | 15 | ✅ |
-| Tool/Agent Exploit | 4 | 16 | ✅ |
-| **Total** | **16** | **67** | |
+| Module | Plugins | Attacks | OWASP LLM | Status |
+|--------|---------|---------|-----------|--------|
+| Prompt Injection | 4 | 20 | LLM01 | ✅ |
+| Data Leakage | 4 | 16 | LLM02 | ✅ |
+| Hallucination | 4 | 15 | LLM09 | ✅ |
+| Tool/Agent Exploit | 4 | 16 | LLM06 | ✅ |
+| **Total** | **16** | **67** | **4 categories** | |
 
 ## Architecture
 
@@ -201,6 +201,7 @@ For the full scoring specification, see [docs/scoring-model.md](docs/scoring-mod
 - [Plugin Authoring Guide](docs/plugin-authoring.md)
 - [Scoring Model](docs/scoring-model.md)
 - [Configuration Reference](docs/configuration.md)
+- [OWASP LLM Top 10 Mapping](docs/owasp-mapping.md)
 
 ## Roadmap
 
