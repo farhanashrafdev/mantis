@@ -25,6 +25,7 @@ class JailbreakPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['prompt-injection', 'jailbreak', 'bypass', 'guardrails'],
+        owaspLLM: 'LLM01: Prompt Injection',
     };
 
     prompts: AttackPrompt[] = [

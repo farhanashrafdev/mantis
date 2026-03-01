@@ -25,6 +25,7 @@ class SystemOverridePlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['prompt-injection', 'system-prompt', 'override', 'identity'],
+        owaspLLM: 'LLM01: Prompt Injection',
     };
 
     prompts: AttackPrompt[] = [

@@ -25,6 +25,7 @@ class InstructionExtractionPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['prompt-injection', 'system-prompt', 'extraction', 'leakage'],
+        owaspLLM: 'LLM01: Prompt Injection',
     };
 
     prompts: AttackPrompt[] = [

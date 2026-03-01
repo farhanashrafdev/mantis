@@ -26,6 +26,7 @@ class SecretRetrievalPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['data-leakage', 'secrets', 'api-keys', 'credentials', 'tokens'],
+        owaspLLM: 'LLM02: Sensitive Information Disclosure',
     };
 
     prompts: AttackPrompt[] = [

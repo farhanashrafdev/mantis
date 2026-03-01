@@ -25,6 +25,7 @@ class ConfidenceMismatchPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['hallucination', 'confidence', 'overconfidence', 'calibration'],
+        owaspLLM: 'LLM09: Misinformation',
     };
 
     prompts: AttackPrompt[] = [

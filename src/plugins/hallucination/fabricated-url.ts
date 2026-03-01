@@ -27,6 +27,7 @@ class FabricatedUrlPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['hallucination', 'urls', 'fabrication', 'phishing-risk'],
+        owaspLLM: 'LLM09: Misinformation',
     };
 
     prompts: AttackPrompt[] = [

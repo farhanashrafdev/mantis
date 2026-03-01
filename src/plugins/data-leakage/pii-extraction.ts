@@ -26,6 +26,7 @@ class PIIExtractionPlugin extends BasePlugin {
         version: '1.0.0',
         author: 'mantis',
         tags: ['data-leakage', 'pii', 'privacy', 'personal-data', 'gdpr'],
+        owaspLLM: 'LLM02: Sensitive Information Disclosure',
     };
 
     prompts: AttackPrompt[] = [

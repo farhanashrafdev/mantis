@@ -13,6 +13,7 @@
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { PluginRegistry } from './plugin-registry.js';
 import { HttpAdapter } from '../adapters/http-adapter.js';
 import type {
@@ -303,7 +304,7 @@ export class CoreEngine {
                 startedAt,
                 completedAt,
                 durationMs,
-                mantisVersion: '0.1.0',
+                mantisVersion: this.getVersion(),
                 pluginsExecuted,
                 totalPromptsSent,
             },
@@ -331,5 +332,17 @@ export class CoreEngine {
     /** Load plugins from a specific directory */
     async loadPlugins(pluginsDir: string): Promise<void> {
         await this.registry.discover(pluginsDir);
+    }
+
+    /** Read version from package.json */
+    private getVersion(): string {
+        try {
+            const currentFile = fileURLToPath(import.meta.url);
+            const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
+            const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string };
+            return pkg.version;
+        } catch {
+            return '0.0.0';
+        }
     }
 }
