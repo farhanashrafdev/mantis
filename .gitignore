@@ -35,3 +35,8 @@ npm-debug.log*
 # Scan outputs (don't commit results)
 mantis-output/
 *.sarif
+scan-*.json
+
+# Windows artifacts
+nul
+

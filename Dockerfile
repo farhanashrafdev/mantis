@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Install dependencies first (layer cache optimisation)
 COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 # Copy source and compile
 COPY tsconfig.json ./
@@ -20,7 +20,7 @@ COPY src/ ./src/
 RUN npm run build
 
 # Prune dev dependencies
-RUN npm prune --omit=dev --legacy-peer-deps
+RUN npm prune --omit=dev
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime

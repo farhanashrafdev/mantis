@@ -4,6 +4,7 @@
   "description": "Open-source CLI toolkit for automated red-teaming of LLM-powered applications",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "mantis": "dist/cli/cli.js"
   },
@@ -35,7 +36,11 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/farhanashrafdev/mantis.git"
+    "url": "git+https://github.com/farhanashrafdev/mantis.git"
+  },
+  "homepage": "https://github.com/farhanashrafdev/mantis#readme",
+  "bugs": {
+    "url": "https://github.com/farhanashrafdev/mantis/issues"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -48,7 +53,7 @@
     "yaml": "^2.6.1"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.15.0",
     "@types/node": "^22.10.0",
     "eslint": "^9.15.0",
     "tsx": "^4.19.2",
