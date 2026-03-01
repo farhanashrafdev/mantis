@@ -31,6 +31,18 @@ import {
     SeverityLevel,
 } from '../types/types.js';
 
+/** Read version from package.json once at module load */
+const MANTIS_VERSION = (() => {
+    try {
+        const currentFile = fileURLToPath(import.meta.url);
+        const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string };
+        return pkg.version;
+    } catch {
+        return '0.0.0';
+    }
+})();
+
 /** Default logger implementation */
 function createDefaultLogger(verbose: boolean): Logger {
     return {
@@ -304,7 +316,7 @@ export class CoreEngine {
                 startedAt,
                 completedAt,
                 durationMs,
-                mantisVersion: this.getVersion(),
+                mantisVersion: MANTIS_VERSION,
                 pluginsExecuted,
                 totalPromptsSent,
             },
@@ -332,17 +344,5 @@ export class CoreEngine {
     /** Load plugins from a specific directory */
     async loadPlugins(pluginsDir: string): Promise<void> {
         await this.registry.discover(pluginsDir);
-    }
-
-    /** Read version from package.json */
-    private getVersion(): string {
-        try {
-            const currentFile = fileURLToPath(import.meta.url);
-            const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
-            const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string };
-            return pkg.version;
-        } catch {
-            return '0.0.0';
-        }
     }
 }
