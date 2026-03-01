@@ -21,7 +21,7 @@
 
 ## What is Mantis?
 
-**Mantis** is an open-source, modular CLI tool for automated security testing of LLM-powered applications. Think **OWASP ZAP** meets **Burp Suite** — but purpose-built for the AI era.
+**Mantis** is an open-source, modular CLI tool for automated security testing of LLM-powered applications.
 
 Mantis systematically probes your AI applications for:
 
