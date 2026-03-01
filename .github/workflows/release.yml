@@ -77,7 +77,7 @@ jobs:
 
       - name: Install, typecheck, test & build
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run typecheck
           npm test
           npm run build

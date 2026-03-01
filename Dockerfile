@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Install dependencies first (layer cache optimisation)
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy source and compile
 COPY tsconfig.json ./
@@ -26,7 +26,7 @@ RUN npm prune --production
 FROM node:22-alpine AS runtime
 
 LABEL org.opencontainers.image.title="mantis" \
-      org.opencontainers.image.description="AI Red Team Toolkit — Automated LLM Security Testing" \
+      org.opencontainers.image.description="Open-source AI red-team CLI. Automated security testing for LLM apps" \
       org.opencontainers.image.source="https://github.com/farhanashrafdev/mantis" \
       org.opencontainers.image.license="Apache-2.0" \
       org.opencontainers.image.vendor="farhanashrafdev"
