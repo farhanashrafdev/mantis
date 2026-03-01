@@ -71,10 +71,10 @@ refactor: simplify plugin registry discovery
 ## Pull Request Process
 
 1. **Fork** the repository
-2. **Create a branch** from `main`: `git checkout -b feat/my-feature`
+2. **Create a branch** from `master`: `git checkout -b feat/my-feature`
 3. **Make your changes** with clear commit messages
 4. **Run checks:** `npm run typecheck`
-5. **Push** and open a PR against `main`
+5. **Push** and open a PR against `master`
 6. **Describe** your changes in the PR body
 
 ### PR Checklist
