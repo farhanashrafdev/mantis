@@ -20,7 +20,7 @@ COPY src/ ./src/
 RUN npm run build
 
 # Prune dev dependencies
-RUN npm prune --production
+RUN npm prune --omit=dev --legacy-peer-deps
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime
