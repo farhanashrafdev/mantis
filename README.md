@@ -30,6 +30,16 @@ Mantis systematically probes your AI applications for:
 - 🟡 **Hallucination** — fabricated entities, fake URLs, citation failures
 - 🟣 **Tool/Agent Exploitation** — forced tool invocation, unauthorized actions, function manipulation
 
+*Mantis natively maps all plugins to the [OWASP Top 10 for LLM Applications (2025)](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/) framework.*
+
+### Key Features
+
+- **Automated Scanning** — 16 built-in plugins executing 67 distinct attack prompts dynamically.
+- **ALVSS Risk Scoring** — Custom CVSS-inspired scoring model for AI vulnerabilities covering Exploitability, Impact, Data Sensitivity, Reproducibility, and Model Compliance.
+- **OWASP LLM Top 10 Native** — Built-in mapping to the 2025 OWASP LLM framework for compliance reporting.
+- **CI/CD Ready** — Process exit code gates and native SARIF output for GitHub Security tab integration.
+- **Highly Extensible** — 15 lines of boilerplate to write custom attack plugins.
+
 ## Quick Start
 
 ### Installation
@@ -64,7 +74,9 @@ docker run --rm ghcr.io/farhanashrafdev/mantis:latest \
 mantis scan --config mantis.config.yaml
 ```
 
-### CI/CD Integration
+## CI/CD Integration
+
+Mantis is designed to run in continuous integration pipelines as a quality gate.
 
 **GitHub Actions — full workflow:**
 
@@ -134,7 +146,6 @@ npm install -g mantis-redteam
 mantis scan --target "$AI_APP_URL" --format sarif --output results.sarif
 # Exit codes: 0 = clean, 1 = high/critical found, 2 = error
 ```
-
 
 ### Exit Codes
 
