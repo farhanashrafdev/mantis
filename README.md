@@ -5,6 +5,7 @@
 **Open-source CLI toolkit for automated red-teaming of LLM-powered applications**
 
 [![CI](https://github.com/farhanashrafdev/mantis/actions/workflows/ci.yml/badge.svg)](https://github.com/farhanashrafdev/mantis/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/mantis-redteam.svg)](https://www.npmjs.com/package/mantis-redteam)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org)
@@ -34,10 +35,13 @@ Mantis systematically probes your AI applications for:
 ### Installation
 
 ```bash
-# npm (global)
-npm install -g mantis-ai
+# npm (global install)
+npm install -g mantis-redteam
 
-# Or run with Docker
+# Run once without installing
+npx mantis-redteam scan --target https://your-ai-app.com/api/chat
+
+# Or pull the Docker image
 docker pull ghcr.io/farhanashrafdev/mantis:latest
 ```
 
@@ -62,16 +66,75 @@ mantis scan --config mantis.config.yaml
 
 ### CI/CD Integration
 
+**GitHub Actions — full workflow:**
+
 ```yaml
 # .github/workflows/ai-security.yml
-- name: Mantis AI Security Scan
-  run: mantis scan --target ${{ secrets.AI_APP_URL }} --format sarif --output results.sarif
+name: AI Security Scan
 
-- name: Upload SARIF
-  uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: results.sarif
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  mantis-scan:
+    name: Mantis Red Team Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # required to upload SARIF to GitHub Security tab
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Mantis
+        run: npm install -g mantis-redteam
+
+      - name: Run security scan
+        run: |
+          mantis scan \
+            --target ${{ secrets.AI_APP_URL }} \
+            --format sarif \
+            --output results.sarif \
+            --severity-threshold medium
+        continue-on-error: true   # upload results even if findings are found
+
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+
+      - name: Gate on critical/high findings
+        run: |
+          mantis scan \
+            --target ${{ secrets.AI_APP_URL }} \
+            --severity-threshold high \
+            --format json \
+            --output gate.json
+          # Exit code 1 = high/critical findings → breaks the pipeline
 ```
+
+**Or run via Docker (no Node.js required in the runner):**
+
+```yaml
+      - name: Run Mantis via Docker
+        run: |
+          docker run --rm \
+            ghcr.io/farhanashrafdev/mantis:latest \
+            scan --target ${{ secrets.AI_APP_URL }} \
+                 --format sarif --output /workspace/results.sarif
+```
+
+**Jenkins / GitLab CI:**
+
+```bash
+# Any CI system — install and run
+npm install -g mantis-redteam
+mantis scan --target "$AI_APP_URL" --format sarif --output results.sarif
+# Exit codes: 0 = clean, 1 = high/critical found, 2 = error
+```
+
 
 ### Exit Codes
 

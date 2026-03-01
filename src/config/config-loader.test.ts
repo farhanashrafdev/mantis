@@ -1,10 +1,16 @@
 import { describe, it, expect } from 'vitest';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { ConfigLoader } from './config-loader.js';
 import { SeverityLevel, OutputFormat } from '../types/types.js';
 
+// Use an isolated temp dir so the tests never find a real mantis.config.yaml
+// that may have been generated in the project root during local development.
+const isolatedDir = mkdtempSync(`${tmpdir()}/mantis-test-`);
+
 describe('ConfigLoader', () => {
     it('loads default configuration when no overrides are provided', async () => {
-        const loader = new ConfigLoader();
+        const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({});
 
         expect(config.target.url).toBe('');
@@ -15,7 +21,7 @@ describe('ConfigLoader', () => {
     });
 
     it('merges CLI overrides correctly', async () => {
-        const loader = new ConfigLoader();
+        const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({
             cliOverrides: {
                 target: { url: 'https://example.com/api', method: 'POST', headers: {}, promptField: '', responseField: '' },
@@ -34,7 +40,7 @@ describe('ConfigLoader', () => {
 
     it('handles environments variables for auth token', async () => {
         process.env.MANTIS_AUTH_TOKEN = 'test-token';
-        const loader = new ConfigLoader();
+        const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({});
 
         expect(config.target.authToken).toBe('test-token');

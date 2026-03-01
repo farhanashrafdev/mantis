@@ -244,6 +244,17 @@ export function createScanCommand(): Command {
                     } else {
                         console.log(jsonOutput);
                     }
+                } else if (config.output.format === OutputFormat.SARIF) {
+                    const { SARIFReporter } = await import('../../reporters/sarif-reporter.js');
+                    const sarifReporter = new SARIFReporter();
+                    const sarifOutput = sarifReporter.generate(report);
+                    if (config.output.file) {
+                        const { writeFile } = await import('node:fs/promises');
+                        await writeFile(config.output.file, sarifOutput, 'utf-8');
+                        console.log(chalk.green(`\n  SARIF report written to ${config.output.file}`));
+                    } else {
+                        console.log(sarifOutput);
+                    }
                 } else {
                     printScanSummary(report);
                 }

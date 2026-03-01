@@ -1,5 +1,5 @@
 {
-  "name": "mantis-ai",
+  "name": "mantis-redteam",
   "version": "0.1.0",
   "description": "Open-source CLI toolkit for automated red-teaming of LLM-powered applications",
   "type": "module",
@@ -7,6 +7,11 @@
   "bin": {
     "mantis": "dist/cli/cli.js"
   },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli/cli.ts",

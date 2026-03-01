@@ -75,9 +75,11 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - name: Install & build
+      - name: Install, typecheck, test & build
         run: |
           npm ci
+          npm run typecheck
+          npm test
           npm run build
 
       - name: Publish
@@ -124,5 +126,5 @@ jobs:
 
             ## npm
             ```bash
-            npm install -g mantis-ai@${{ github.ref_name }}
+            npm install -g mantis-redteam@${{ github.ref_name }}
             ```
