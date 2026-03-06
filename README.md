@@ -7,7 +7,7 @@
 [![CI](https://github.com/farhanashrafdev/mantis/actions/workflows/ci.yml/badge.svg)](https://github.com/farhanashrafdev/mantis/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mantis-redteam.svg)](https://www.npmjs.com/package/mantis-redteam)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org)
 [![Docker](https://img.shields.io/badge/Docker-GHCR-blue.svg)](https://ghcr.io/farhanashrafdev/mantis)
 
