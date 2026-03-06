@@ -16,14 +16,15 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import {
+import type {
     Plugin,
     PluginMeta,
     AttackPrompt,
     Finding,
     FindingResult,
     ScanContext,
-    LLMResponse,
+    LLMResponse} from '../types/types.js';
+import {
     SeverityLevel,
 } from '../types/types.js';
 
@@ -91,7 +92,7 @@ export abstract class BasePlugin implements Plugin {
                         const retryResponse = await context.adapter.sendPrompt(attackPrompt.prompt);
                         if (retryResponse.success) {
                             const retryResult = this.analyze(attackPrompt, retryResponse);
-                            if (retryResult.vulnerable) successes++;
+                            if (retryResult.vulnerable) {successes++;}
                         }
                     }
                 }

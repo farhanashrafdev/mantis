@@ -16,23 +16,21 @@ import { dirname, join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { PluginRegistry } from './plugin-registry.js';
 import { HttpAdapter } from '../adapters/http-adapter.js';
-import type {
-    Plugin,
-    Finding,
-    ScanContext,
-    ScanConfig,
-    ScanReport,
-    PluginExecutionResult,
-    Logger,
-    PluginStatus,
-} from '../types/types.js';
 import {
     AttackCategory,
     SeverityLevel,
+    type Plugin,
+    type Finding,
+    type ScanContext,
+    type ScanConfig,
+    type ScanReport,
+    type PluginExecutionResult,
+    type Logger,
+    type PluginStatus,
 } from '../types/types.js';
 
 /** Read version from package.json once at module load */
-const MANTIS_VERSION = (() => {
+const MANTIS_VERSION = ((): string => {
     try {
         const currentFile = fileURLToPath(import.meta.url);
         const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
@@ -46,16 +44,17 @@ const MANTIS_VERSION = (() => {
 /** Default logger implementation */
 function createDefaultLogger(verbose: boolean): Logger {
     return {
-        debug: (msg: string, ...args: unknown[]) => {
-            if (verbose) console.debug(`[DEBUG] ${msg}`, ...args);
+        debug: (msg: string, ...args: unknown[]): void => {
+            if (verbose) { console.debug(`[DEBUG] ${msg}`, ...args); }
         },
-        info: (msg: string, ...args: unknown[]) => {
+        info: (msg: string, ...args: unknown[]): void => {
+            // eslint-disable-next-line no-console
             console.info(`[INFO] ${msg}`, ...args);
         },
-        warn: (msg: string, ...args: unknown[]) => {
+        warn: (msg: string, ...args: unknown[]): void => {
             console.warn(`[WARN] ${msg}`, ...args);
         },
-        error: (msg: string, ...args: unknown[]) => {
+        error: (msg: string, ...args: unknown[]): void => {
             console.error(`[ERROR] ${msg}`, ...args);
         },
     };

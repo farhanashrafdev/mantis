@@ -14,7 +14,7 @@ import { existsSync } from 'node:fs';
 import chalk from 'chalk';
 import { printCompactBanner } from '../banner.js';
 
-const DEFAULT_CONFIG_TEMPLATE = (targetUrl?: string) => `# mantis — Configuration File
+const DEFAULT_CONFIG_TEMPLATE = (targetUrl?: string): string => `# mantis — Configuration File
 # Documentation: https://github.com/farhanashrafdev/mantis/docs/configuration.md
 
 version: "1.0"
@@ -93,34 +93,34 @@ profiles:
 `;
 
 export function createConfigCommand(): Command {
-    const config = new Command('config')
-        .description('Manage mantis configuration');
+  const config = new Command('config')
+    .description('Manage mantis configuration');
 
-    config
-        .command('init')
-        .description('Generate a default mantis.config.yaml')
-        .option('-t, --target <url>', 'Pre-fill target URL')
-        .option('-o, --output <path>', 'Output file path', 'mantis.config.yaml')
-        .action(async (options) => {
-            printCompactBanner();
+  config
+    .command('init')
+    .description('Generate a default mantis.config.yaml')
+    .option('-t, --target <url>', 'Pre-fill target URL')
+    .option('-o, --output <path>', 'Output file path', 'mantis.config.yaml')
+    .action(async (options) => {
+      printCompactBanner();
 
-            const outputPath = options['output'] as string;
-            const targetUrl = options['target'] as string | undefined;
+      const outputPath = options['output'] as string;
+      const targetUrl = options['target'] as string | undefined;
 
-            if (existsSync(outputPath)) {
-                console.error(chalk.yellow(`  ⚠  ${outputPath} already exists. Use --output to specify a different path.`));
-                process.exit(1);
-            }
+      if (existsSync(outputPath)) {
+        console.error(chalk.yellow(`  ⚠  ${outputPath} already exists. Use --output to specify a different path.`));
+        process.exit(1);
+      }
 
-            const content = DEFAULT_CONFIG_TEMPLATE(targetUrl);
-            await writeFile(outputPath, content, 'utf-8');
+      const content = DEFAULT_CONFIG_TEMPLATE(targetUrl);
+      await writeFile(outputPath, content, 'utf-8');
 
-            console.log(chalk.green(`  ✓ Configuration file created: ${outputPath}`));
-            console.log(chalk.gray(`  Edit the file to configure your target and scan settings.`));
-            console.log();
-            console.log(chalk.gray(`  Quick start:`));
-            console.log(chalk.white(`    mantis scan --config ${outputPath}`));
-        });
+      console.log(chalk.green(`  ✓ Configuration file created: ${outputPath}`));
+      console.log(chalk.gray(`  Edit the file to configure your target and scan settings.`));
+      console.log();
+      console.log(chalk.gray(`  Quick start:`));
+      console.log(chalk.white(`    mantis scan --config ${outputPath}`));
+    });
 
-    return config;
+  return config;
 }

@@ -14,11 +14,12 @@
  * Each dimension scores 0–10. Final score = weighted sum normalized to 0–10.
  */
 
-import {
+import type {
     Finding,
     ScoringDimensions,
     ScoringWeights,
-    ScoringResult,
+    ScoringResult} from '../types/types.js';
+import {
     SeverityLevel,
 } from '../types/types.js';
 
@@ -42,10 +43,10 @@ const SEVERITY_TO_SCORE: Record<SeverityLevel, number> = {
 
 /** Map overall score to severity */
 function scoreToSeverity(score: number): SeverityLevel {
-    if (score >= 9.0) return SeverityLevel.Critical;
-    if (score >= 7.0) return SeverityLevel.High;
-    if (score >= 4.0) return SeverityLevel.Medium;
-    if (score >= 1.0) return SeverityLevel.Low;
+    if (score >= 9.0) {return SeverityLevel.Critical;}
+    if (score >= 7.0) {return SeverityLevel.High;}
+    if (score >= 4.0) {return SeverityLevel.Medium;}
+    if (score >= 1.0) {return SeverityLevel.Low;}
     return SeverityLevel.Info;
 }
 
@@ -235,7 +236,7 @@ export class ALVSSEngine {
      * - Whether it was confirmed reproducible
      */
     private assessReproducibility(finding: Finding): number {
-        if (!finding.reproducible) return 2.0;
+        if (!finding.reproducible) {return 2.0;}
 
         const attempts = finding.attempts ?? 1;
         const successes = finding.successes ?? 1;

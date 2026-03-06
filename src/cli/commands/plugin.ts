@@ -58,7 +58,7 @@ export function createPluginCommand(): Command {
             // Group by category
             const categories = registry.getCategories();
             for (const category of categories) {
-                if (categoryFilter && category !== categoryFilter) continue;
+                if (categoryFilter && category !== categoryFilter) {continue;}
 
                 const catPlugins = registry.getByCategory(category);
                 console.log(chalk.bold.redBright(`  ▸ ${category}`));

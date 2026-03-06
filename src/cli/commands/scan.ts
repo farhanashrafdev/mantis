@@ -14,13 +14,14 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { CoreEngine } from '../../core/engine.js';
 import { printBanner, printLegalWarning } from '../banner.js';
-import {
+import type {
     ScanConfig,
-    SeverityLevel,
-    OutputFormat,
     Finding,
     PluginExecutionResult,
-    ScanReport,
+    ScanReport} from '../../types/types.js';
+import {
+    SeverityLevel,
+    OutputFormat
 } from '../../types/types.js';
 import { CONFIG_DEFAULTS } from '../../types/config.js';
 
@@ -66,11 +67,11 @@ function buildScanConfig(options: Record<string, unknown>): ScanConfig {
         },
         scoring: {
             weights: {
-                exploitability: CONFIG_DEFAULTS.scoring.weights?.exploitability ?? 0.3,
-                impact: CONFIG_DEFAULTS.scoring.weights?.impact ?? 0.3,
-                dataSensitivity: CONFIG_DEFAULTS.scoring.weights?.dataSensitivity ?? 0.2,
-                reproducibility: CONFIG_DEFAULTS.scoring.weights?.reproducibility ?? 0.1,
-                modelCompliance: CONFIG_DEFAULTS.scoring.weights?.modelCompliance ?? 0.1
+                exploitability: CONFIG_DEFAULTS.scoring.weights?.exploitability ?? 0.30,
+                impact: CONFIG_DEFAULTS.scoring.weights?.impact ?? 0.25,
+                dataSensitivity: CONFIG_DEFAULTS.scoring.weights?.dataSensitivity ?? 0.20,
+                reproducibility: CONFIG_DEFAULTS.scoring.weights?.reproducibility ?? 0.15,
+                modelCompliance: CONFIG_DEFAULTS.scoring.weights?.modelCompliance ?? 0.10
             }
         },
     };
@@ -129,11 +130,11 @@ function printScanSummary(report: ScanReport): void {
     // Severity counts
     console.log(chalk.bold.white('  FINDINGS'));
     console.log(chalk.white('  ───────────────────────────────────────────────────────'));
-    if (report.summary.criticalCount > 0) console.log(`  ${chalk.bgRed.white.bold(` ${report.summary.criticalCount} `)} Critical`);
-    if (report.summary.highCount > 0) console.log(`  ${chalk.red.bold(report.summary.highCount.toString())}   High`);
-    if (report.summary.mediumCount > 0) console.log(`  ${chalk.yellow.bold(report.summary.mediumCount.toString())}   Medium`);
-    if (report.summary.lowCount > 0) console.log(`  ${chalk.blue(report.summary.lowCount.toString())}   Low`);
-    if (report.summary.infoCount > 0) console.log(`  ${chalk.gray(report.summary.infoCount.toString())}   Info`);
+    if (report.summary.criticalCount > 0) {console.log(`  ${chalk.bgRed.white.bold(` ${report.summary.criticalCount} `)} Critical`);}
+    if (report.summary.highCount > 0) {console.log(`  ${chalk.red.bold(report.summary.highCount.toString())}   High`);}
+    if (report.summary.mediumCount > 0) {console.log(`  ${chalk.yellow.bold(report.summary.mediumCount.toString())}   Medium`);}
+    if (report.summary.lowCount > 0) {console.log(`  ${chalk.blue(report.summary.lowCount.toString())}   Low`);}
+    if (report.summary.infoCount > 0) {console.log(`  ${chalk.gray(report.summary.infoCount.toString())}   Info`);}
     console.log(`  ${chalk.bold(report.summary.totalFindings.toString())}   Total`);
     console.log();
 

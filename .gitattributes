@@ -1,0 +1,14 @@
+# Enforce LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly mark binary files
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Ensure shell scripts always use LF
+*.sh text eol=lf
+
+# Ensure batch scripts always use CRLF on checkout (Windows-friendly)
+*.bat text eol=crlf
+*.cmd text eol=crlf

@@ -23,8 +23,9 @@ import type {
     ProfileConfig,
 } from '../types/config.js';
 import { CONFIG_DEFAULTS } from '../types/config.js';
+import type {
+    ScanConfig} from '../types/types.js';
 import {
-    ScanConfig,
     SeverityLevel,
     OutputFormat
 } from '../types/types.js';
@@ -56,7 +57,7 @@ export class ConfigLoader {
             ? resolve(this.configDir, explicitPath)
             : this.findConfigFile();
 
-        if (!filePath) return null;
+        if (!filePath) {return null;}
 
         try {
             const content = await readFile(filePath, 'utf-8');
@@ -64,7 +65,7 @@ export class ConfigLoader {
             this.validate(parsed, filePath);
             return parsed;
         } catch (error) {
-            if (error instanceof ConfigValidationError) throw error;
+            if (error instanceof ConfigValidationError) {throw error;}
             const msg = error instanceof Error ? error.message : String(error);
             throw new ConfigValidationError(
                 filePath,
@@ -155,7 +156,7 @@ export class ConfigLoader {
     private findConfigFile(): string | null {
         for (const name of CONFIG_FILE_NAMES) {
             const fullPath = resolve(this.configDir, name);
-            if (existsSync(fullPath)) return fullPath;
+            if (existsSync(fullPath)) {return fullPath;}
         }
         return null;
     }
@@ -184,36 +185,36 @@ export class ConfigLoader {
     private mergeFileConfig(config: ScanConfig, file: MantisConfigFile): void {
         // Target
         if (file.target) {
-            if (file.target.url) config.target.url = file.target.url;
-            if (file.target.method) config.target.method = file.target.method;
-            if (file.target.headers) config.target.headers = { ...config.target.headers, ...file.target.headers };
-            if (file.target.promptField) config.target.promptField = file.target.promptField;
-            if (file.target.responseField) config.target.responseField = file.target.responseField;
-            if (file.target.authToken) config.target.authToken = file.target.authToken;
+            if (file.target.url) {config.target.url = file.target.url;}
+            if (file.target.method) {config.target.method = file.target.method;}
+            if (file.target.headers) {config.target.headers = { ...config.target.headers, ...file.target.headers };}
+            if (file.target.promptField) {config.target.promptField = file.target.promptField;}
+            if (file.target.responseField) {config.target.responseField = file.target.responseField;}
+            if (file.target.authToken) {config.target.authToken = file.target.authToken;}
         }
 
         // Modules
         if (file.modules) {
-            if (file.modules.include) config.modules.include = [...file.modules.include];
-            if (file.modules.exclude) config.modules.exclude = [...file.modules.exclude];
+            if (file.modules.include) {config.modules.include = [...file.modules.include];}
+            if (file.modules.exclude) {config.modules.exclude = [...file.modules.exclude];}
         }
 
         // Scan
         if (file.scan) {
-            if (file.scan.timeoutMs !== undefined) config.scan.timeoutMs = file.scan.timeoutMs;
-            if (file.scan.maxRetries !== undefined) config.scan.maxRetries = file.scan.maxRetries;
-            if (file.scan.retryDelayMs !== undefined) config.scan.retryDelayMs = file.scan.retryDelayMs;
-            if (file.scan.rateLimit !== undefined) config.scan.rateLimit = file.scan.rateLimit;
-            if (file.scan.severityThreshold) config.scan.severityThreshold = file.scan.severityThreshold;
-            if (file.scan.reproducibilityAttempts !== undefined) config.scan.reproducibilityAttempts = file.scan.reproducibilityAttempts;
+            if (file.scan.timeoutMs !== undefined) {config.scan.timeoutMs = file.scan.timeoutMs;}
+            if (file.scan.maxRetries !== undefined) {config.scan.maxRetries = file.scan.maxRetries;}
+            if (file.scan.retryDelayMs !== undefined) {config.scan.retryDelayMs = file.scan.retryDelayMs;}
+            if (file.scan.rateLimit !== undefined) {config.scan.rateLimit = file.scan.rateLimit;}
+            if (file.scan.severityThreshold) {config.scan.severityThreshold = file.scan.severityThreshold;}
+            if (file.scan.reproducibilityAttempts !== undefined) {config.scan.reproducibilityAttempts = file.scan.reproducibilityAttempts;}
         }
 
         // Output
         if (file.output) {
-            if (file.output.format) config.output.format = file.output.format;
-            if (file.output.file) config.output.file = file.output.file;
-            if (file.output.verbose !== undefined) config.output.verbose = file.output.verbose;
-            if (file.output.redactResponses !== undefined) config.output.redactResponses = file.output.redactResponses;
+            if (file.output.format) {config.output.format = file.output.format;}
+            if (file.output.file) {config.output.file = file.output.file;}
+            if (file.output.verbose !== undefined) {config.output.verbose = file.output.verbose;}
+            if (file.output.redactResponses !== undefined) {config.output.redactResponses = file.output.redactResponses;}
         }
 
         // Scoring
@@ -232,8 +233,8 @@ export class ConfigLoader {
         }>;
 
         if (p.modules) {
-            if (p.modules.include) config.modules.include = [...p.modules.include];
-            if (p.modules.exclude) config.modules.exclude = [...p.modules.exclude];
+            if (p.modules.include) {config.modules.include = [...p.modules.include];}
+            if (p.modules.exclude) {config.modules.exclude = [...p.modules.exclude];}
         }
 
         if (p.scan) {
@@ -252,32 +253,32 @@ export class ConfigLoader {
     /** Merge CLI overrides */
     private mergeCLIOverrides(config: ScanConfig, overrides: Partial<ScanConfig>): void {
         if (overrides.target) {
-            if (overrides.target.url) config.target.url = overrides.target.url;
-            if (overrides.target.method) config.target.method = overrides.target.method;
-            if (overrides.target.promptField) config.target.promptField = overrides.target.promptField;
-            if (overrides.target.responseField) config.target.responseField = overrides.target.responseField;
-            if (overrides.target.authToken) config.target.authToken = overrides.target.authToken;
+            if (overrides.target.url) {config.target.url = overrides.target.url;}
+            if (overrides.target.method) {config.target.method = overrides.target.method;}
+            if (overrides.target.promptField) {config.target.promptField = overrides.target.promptField;}
+            if (overrides.target.responseField) {config.target.responseField = overrides.target.responseField;}
+            if (overrides.target.authToken) {config.target.authToken = overrides.target.authToken;}
         }
 
         if (overrides.modules) {
-            if (overrides.modules.include?.length) config.modules.include = overrides.modules.include;
-            if (overrides.modules.exclude?.length) config.modules.exclude = overrides.modules.exclude;
+            if (overrides.modules.include?.length) {config.modules.include = overrides.modules.include;}
+            if (overrides.modules.exclude?.length) {config.modules.exclude = overrides.modules.exclude;}
         }
 
         if (overrides.scan) {
-            if (overrides.scan.timeoutMs !== undefined) config.scan.timeoutMs = overrides.scan.timeoutMs;
-            if (overrides.scan.maxRetries !== undefined) config.scan.maxRetries = overrides.scan.maxRetries;
-            if (overrides.scan.retryDelayMs !== undefined) config.scan.retryDelayMs = overrides.scan.retryDelayMs;
-            if (overrides.scan.rateLimit !== undefined) config.scan.rateLimit = overrides.scan.rateLimit;
-            if (overrides.scan.severityThreshold) config.scan.severityThreshold = overrides.scan.severityThreshold;
-            if (overrides.scan.reproducibilityAttempts !== undefined) config.scan.reproducibilityAttempts = overrides.scan.reproducibilityAttempts;
+            if (overrides.scan.timeoutMs !== undefined) {config.scan.timeoutMs = overrides.scan.timeoutMs;}
+            if (overrides.scan.maxRetries !== undefined) {config.scan.maxRetries = overrides.scan.maxRetries;}
+            if (overrides.scan.retryDelayMs !== undefined) {config.scan.retryDelayMs = overrides.scan.retryDelayMs;}
+            if (overrides.scan.rateLimit !== undefined) {config.scan.rateLimit = overrides.scan.rateLimit;}
+            if (overrides.scan.severityThreshold) {config.scan.severityThreshold = overrides.scan.severityThreshold;}
+            if (overrides.scan.reproducibilityAttempts !== undefined) {config.scan.reproducibilityAttempts = overrides.scan.reproducibilityAttempts;}
         }
 
         if (overrides.output) {
-            if (overrides.output.format) config.output.format = overrides.output.format;
-            if (overrides.output.file) config.output.file = overrides.output.file;
-            if (overrides.output.verbose !== undefined) config.output.verbose = overrides.output.verbose;
-            if (overrides.output.redactResponses !== undefined) config.output.redactResponses = overrides.output.redactResponses;
+            if (overrides.output.format) {config.output.format = overrides.output.format;}
+            if (overrides.output.file) {config.output.file = overrides.output.file;}
+            if (overrides.output.verbose !== undefined) {config.output.verbose = overrides.output.verbose;}
+            if (overrides.output.redactResponses !== undefined) {config.output.redactResponses = overrides.output.redactResponses;}
         }
     }
 

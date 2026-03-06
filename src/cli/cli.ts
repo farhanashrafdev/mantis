@@ -13,17 +13,31 @@
  */
 
 import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { createScanCommand } from './commands/scan.js';
 import { createReportCommand } from './commands/report.js';
 import { createPluginCommand } from './commands/plugin.js';
 import { createConfigCommand } from './commands/config.js';
+
+/** Read version from package.json */
+const version = ((): string => {
+    try {
+        const currentFile = fileURLToPath(import.meta.url);
+        const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
+        return (JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string }).version;
+    } catch {
+        return '0.0.0';
+    }
+})();
 
 const program = new Command();
 
 program
     .name('mantis')
     .description('AI Red Team Toolkit — Automated LLM Security Testing')
-    .version('0.1.0', '-V, --version', 'Display mantis version')
+    .version(version, '-V, --version', 'Display mantis version')
     .addCommand(createScanCommand())
     .addCommand(createReportCommand())
     .addCommand(createPluginCommand())

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { JSONReporter } from './json-reporter.js';
-import { ScanReport, SeverityLevel, AttackCategory } from '../types/types.js';
+import type { ScanReport} from '../types/types.js';
+import { SeverityLevel, AttackCategory } from '../types/types.js';
 
 describe('JSONReporter', () => {
     const report: ScanReport = {

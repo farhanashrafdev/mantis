@@ -102,18 +102,18 @@ export class PluginRegistry {
         const categoryDirs = await readdir(pluginsDir, { withFileTypes: true });
 
         for (const dir of categoryDirs) {
-            if (!dir.isDirectory()) continue;
-            if (dir.name.startsWith('.') || dir.name.startsWith('_')) continue;
+            if (!dir.isDirectory()) {continue;}
+            if (dir.name.startsWith('.') || dir.name.startsWith('_')) {continue;}
 
             const categoryPath = join(pluginsDir, dir.name);
             const pluginFiles = await readdir(categoryPath, { withFileTypes: true });
 
             for (const file of pluginFiles) {
-                if (!file.isFile()) continue;
-                if (!file.name.endsWith('.ts') && !file.name.endsWith('.js')) continue;
-                if (file.name.endsWith('.d.ts')) continue;
-                if (file.name.startsWith('.') || file.name.startsWith('_')) continue;
-                if (file.name.endsWith('.test.ts') || file.name.endsWith('.spec.ts')) continue;
+                if (!file.isFile()) {continue;}
+                if (!file.name.endsWith('.ts') && !file.name.endsWith('.js')) {continue;}
+                if (file.name.endsWith('.d.ts')) {continue;}
+                if (file.name.startsWith('.') || file.name.startsWith('_')) {continue;}
+                if (file.name.endsWith('.test.ts') || file.name.endsWith('.spec.ts')) {continue;}
 
                 const filePath = join(categoryPath, file.name);
                 await this.loadPlugin(filePath);
@@ -167,13 +167,13 @@ export class PluginRegistry {
         const errors: string[] = [];
 
         // Validate meta
-        if (!plugin.meta) errors.push('Missing "meta" property');
+        if (!plugin.meta) {errors.push('Missing "meta" property');}
         else {
-            if (!plugin.meta.id) errors.push('Missing "meta.id"');
-            if (!plugin.meta.name) errors.push('Missing "meta.name"');
-            if (!plugin.meta.description) errors.push('Missing "meta.description"');
-            if (!plugin.meta.category) errors.push('Missing "meta.category"');
-            if (!plugin.meta.version) errors.push('Missing "meta.version"');
+            if (!plugin.meta.id) {errors.push('Missing "meta.id"');}
+            if (!plugin.meta.name) {errors.push('Missing "meta.name"');}
+            if (!plugin.meta.description) {errors.push('Missing "meta.description"');}
+            if (!plugin.meta.category) {errors.push('Missing "meta.category"');}
+            if (!plugin.meta.version) {errors.push('Missing "meta.version"');}
         }
 
         // Validate prompts
@@ -184,10 +184,10 @@ export class PluginRegistry {
         }
 
         // Validate methods
-        if (typeof plugin.initialize !== 'function') errors.push('Missing "initialize" method');
-        if (typeof plugin.execute !== 'function') errors.push('Missing "execute" method');
-        if (typeof plugin.analyze !== 'function') errors.push('Missing "analyze" method');
-        if (typeof plugin.teardown !== 'function') errors.push('Missing "teardown" method');
+        if (typeof plugin.initialize !== 'function') {errors.push('Missing "initialize" method');}
+        if (typeof plugin.execute !== 'function') {errors.push('Missing "execute" method');}
+        if (typeof plugin.analyze !== 'function') {errors.push('Missing "analyze" method');}
+        if (typeof plugin.teardown !== 'function') {errors.push('Missing "teardown" method');}
 
         if (errors.length > 0) {
             throw new PluginValidationError(

@@ -159,7 +159,7 @@ export class HttpAdapter implements LLMAdapter {
                 }
 
                 // Retry on network errors
-                if (attempt < this.config.maxRetries) continue;
+                if (attempt < this.config.maxRetries) {continue;}
             }
         }
 

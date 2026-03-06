@@ -8,9 +8,10 @@
  *   - API responses
  */
 
-import {
+import type {
     ScanReport,
-    Reporter,
+    Reporter} from '../types/types.js';
+import {
     OutputFormat,
 } from '../types/types.js';
 

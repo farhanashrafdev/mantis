@@ -20,7 +20,8 @@
     "lint": "eslint src/",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "keywords": [
     "ai-security",

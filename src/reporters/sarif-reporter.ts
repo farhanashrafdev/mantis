@@ -11,10 +11,11 @@
  * Spec: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
  */
 
-import {
+import type {
     ScanReport,
     Finding,
-    Reporter,
+    Reporter} from '../types/types.js';
+import {
     SeverityLevel,
     OutputFormat,
 } from '../types/types.js';

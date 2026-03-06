@@ -9,9 +9,11 @@
 
 import Table from 'cli-table3';
 import chalk from 'chalk';
-import {
+import type {
     ScanReport,
-    Reporter,
+    Reporter
+} from '../types/types.js';
+import {
     SeverityLevel,
     OutputFormat,
 } from '../types/types.js';
@@ -31,9 +33,9 @@ function severityDisplay(severity: SeverityLevel): string {
 /** Risk score to colored display */
 function scoreDisplay(score: number): string {
     const fixed = score.toFixed(1);
-    if (score >= 9) return chalk.bgRed.white.bold(` ${fixed} `);
-    if (score >= 7) return chalk.red.bold(fixed);
-    if (score >= 4) return chalk.yellow.bold(fixed);
+    if (score >= 9) { return chalk.bgRed.white.bold(` ${fixed} `); }
+    if (score >= 7) { return chalk.red.bold(fixed); }
+    if (score >= 4) { return chalk.yellow.bold(fixed); }
     return chalk.green(fixed);
 }
 
@@ -166,7 +168,7 @@ export class TableReporter implements Reporter {
             lines.push('');
 
             // Remediation summary
-            const remediations = [...new Set(report.findings.filter((f) => f.remediation).map((f) => f.remediation!))];
+            const remediations = [...new Set(report.findings.map((f) => f.remediation).filter((r): r is string => r !== undefined && r !== null))];
             if (remediations.length > 0) {
                 lines.push(chalk.bold.white('  REMEDIATION GUIDANCE'));
                 lines.push(chalk.gray('  ─────────────────────────────────────────────────────────────'));

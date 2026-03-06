@@ -6,6 +6,21 @@
  */
 
 import chalk from 'chalk';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+/** Read version from package.json once at module load */
+const MANTIS_VERSION = ((): string => {
+    try {
+        const currentFile = fileURLToPath(import.meta.url);
+        const pkgPath = join(dirname(dirname(currentFile)), '..', 'package.json');
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as { version: string };
+        return pkg.version;
+    } catch {
+        return '0.0.0';
+    }
+})();
 
 const ASCII_ART = `
 ${chalk.redBright(`  ███╗   ███╗ █████╗ ███╗   ██╗████████╗██╗███████╗`)}
@@ -18,7 +33,7 @@ ${chalk.redBright(`  ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚�
 
 const TAGLINE = chalk.gray('  AI Red Team Toolkit — Automated LLM Security Testing');
 
-const VERSION_LINE = chalk.gray(`  v0.1.0 | https://github.com/farhanashrafdev/mantis`);
+const VERSION_LINE = chalk.gray(`  v${MANTIS_VERSION} | https://github.com/farhanashrafdev/mantis`);
 
 const LEGAL_WARNING = `
 ${chalk.yellowBright('  ⚠  LEGAL & ETHICAL NOTICE')}
@@ -54,7 +69,7 @@ export function printLegalWarning(): void {
  */
 export function printCompactBanner(): void {
     console.log(
-        `${chalk.redBright('mantis')} ${chalk.gray('v0.1.0')} ${chalk.gray('— AI Red Team Toolkit')}`
+        `${chalk.redBright('mantis')} ${chalk.gray(`v${MANTIS_VERSION}`)} ${chalk.gray('— AI Red Team Toolkit')}`
     );
     console.log();
 }
