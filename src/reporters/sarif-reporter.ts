@@ -39,15 +39,15 @@ function toSarifLevel(severity: SeverityLevel): SarifLevel {
     }
 }
 
-/** SARIF security severity mapping (for GitHub) */
+/** SARIF security severity mapping (for GitHub — must be numeric CVSS-style) */
 function toSecuritySeverity(severity: SeverityLevel): string {
     switch (severity) {
-        case SeverityLevel.Critical: return 'critical';
-        case SeverityLevel.High: return 'high';
-        case SeverityLevel.Medium: return 'medium';
-        case SeverityLevel.Low: return 'low';
-        case SeverityLevel.Info: return 'low';
-        default: return 'low';
+        case SeverityLevel.Critical: return '9.0';
+        case SeverityLevel.High: return '7.0';
+        case SeverityLevel.Medium: return '4.0';
+        case SeverityLevel.Low: return '1.0';
+        case SeverityLevel.Info: return '0.0';
+        default: return '0.0';
     }
 }
 
