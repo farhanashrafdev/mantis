@@ -6,7 +6,10 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 # ── Stage 1: Builder ─────────────────────────────────────────────────────────
-FROM node:22-alpine AS builder
+FROM node:22-alpine3.21 AS builder
+
+# Upgrade zlib to patched version (fixes CVE-2026-22184, CVE-2024-37175)
+RUN apk upgrade --no-cache zlib
 
 WORKDIR /app
 
@@ -23,7 +26,10 @@ RUN npm run build
 RUN npm prune --omit=dev
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
-FROM node:22-alpine AS runtime
+FROM node:22-alpine3.21 AS runtime
+
+# Upgrade zlib to patched version (fixes CVE-2026-22184, CVE-2024-37175)
+RUN apk upgrade --no-cache zlib
 
 LABEL org.opencontainers.image.title="mantis" \
       org.opencontainers.image.description="Open-source AI red-team CLI. Automated security testing for LLM apps" \
