@@ -138,14 +138,16 @@ export class SARIFReporter implements Reporter {
                 },
             };
 
-            // Location pointing to the target URL
+            // Location — use a repo-relative file path for GitHub Code Scanning
+            // compatibility (requires file:// scheme). The actual target URL
+            // is preserved in the result properties.
             result.locations = [
                 {
                     physicalLocation: {
                         artifactLocation: {
-                            uri: report.meta.targetUrl,
-                            uriBaseId: 'TARGET',
+                            uri: 'mantis.config.yaml',
                         },
+                        region: { startLine: 1 },
                     },
                     logicalLocations: [
                         {
@@ -155,6 +157,7 @@ export class SARIFReporter implements Reporter {
                     ],
                 },
             ];
+            result.properties['mantis-target'] = report.meta.targetUrl;
 
             results.push(result);
         }

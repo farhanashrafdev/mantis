@@ -174,7 +174,7 @@ describe('SARIFReporter', () => {
         expect(result?.properties['mantis-score']).toBe(8.2);
         expect(result?.properties['mantis-confidence']).toBe(0.95);
         expect(result?.locations?.[0].physicalLocation.artifactLocation.uri).toBe(
-            'https://example.com/chat',
+            'mantis.config.yaml',
         );
         expect(result?.message.text).toContain('Risk Score: 8.2/10');
         expect(result?.message.text).toContain('CWE: CWE-200');
