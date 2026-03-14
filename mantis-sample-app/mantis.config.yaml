@@ -1,0 +1,25 @@
+version: "1.0"
+
+target:
+  url: http://localhost:3001/api/chat
+  method: POST
+  headers:
+    Content-Type: application/json
+  promptField: prompt
+  responseField: response
+
+modules:
+  include: []  # All modules
+
+scan:
+  timeoutMs: 15000
+  maxRetries: 2
+  retryDelayMs: 500
+  rateLimit: 20
+  severityThreshold: low
+  reproducibilityAttempts: 2
+
+output:
+  format: table
+  verbose: false
+  redactResponses: true
