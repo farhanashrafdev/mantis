@@ -1,6 +1,6 @@
 {
   "name": "mantis-redteam",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Open-source CLI toolkit for automated red-teaming of LLM-powered applications",
   "type": "module",
   "main": "dist/index.js",
