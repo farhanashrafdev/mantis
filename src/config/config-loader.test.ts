@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { mkdtempSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -9,6 +9,10 @@ import { SeverityLevel, OutputFormat } from '../types/types.js';
 const makeTempDir = (): string => mkdtempSync(`${tmpdir()}/mantis-test-`);
 
 describe('ConfigLoader', () => {
+    afterEach(() => {
+        vi.unstubAllEnvs();
+    });
+
     it('loads default configuration when no overrides are provided', async () => {
         const isolatedDir = makeTempDir();
         const loader = new ConfigLoader(isolatedDir);
@@ -42,12 +46,11 @@ describe('ConfigLoader', () => {
 
     it('handles environments variables for auth token', async () => {
         const isolatedDir = makeTempDir();
-        process.env.MANTIS_AUTH_TOKEN = 'test-token';
+        vi.stubEnv('MANTIS_AUTH_TOKEN', 'test-token');
         const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({});
 
         expect(config.target.authToken).toBe('test-token');
-        delete process.env.MANTIS_AUTH_TOKEN;
     });
 
     it('throws a validation error for invalid YAML', async () => {
@@ -143,8 +146,8 @@ describe('ConfigLoader', () => {
 
     it('does not override auth token and target url from env when already provided', async () => {
         const isolatedDir = makeTempDir();
-        process.env.MANTIS_AUTH_TOKEN = 'env-token';
-        process.env.MANTIS_TARGET_URL = 'https://env.example.com';
+        vi.stubEnv('MANTIS_AUTH_TOKEN', 'env-token');
+        vi.stubEnv('MANTIS_TARGET_URL', 'https://env.example.com');
 
         const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({
@@ -162,14 +165,11 @@ describe('ConfigLoader', () => {
 
         expect(config.target.url).toBe('https://cli.example.com');
         expect(config.target.authToken).toBe('cli-token');
-
-        delete process.env.MANTIS_AUTH_TOKEN;
-        delete process.env.MANTIS_TARGET_URL;
     });
 
     it('allows env format to override selected output format', async () => {
         const isolatedDir = makeTempDir();
-        process.env.MANTIS_FORMAT = 'sarif';
+        vi.stubEnv('MANTIS_FORMAT', 'sarif');
 
         const loader = new ConfigLoader(isolatedDir);
         const config = await loader.buildConfig({
@@ -183,6 +183,5 @@ describe('ConfigLoader', () => {
         });
 
         expect(config.output.format).toBe(OutputFormat.SARIF);
-        delete process.env.MANTIS_FORMAT;
     });
 });
