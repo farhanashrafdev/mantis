@@ -12,9 +12,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  schedule:
-    # Nightly scan — LLMs drift, so scan even when code hasn't changed
-    - cron: '0 2 * * *'
   workflow_dispatch:
 
 concurrency:
